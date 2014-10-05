@@ -29,15 +29,17 @@
                 'data': theData
             }, function(response) {
                 response = jQuery.parseJSON(response);
-                jQuery('#' + id + '-status').val(response.status);
-                jQuery('#' + id + '-status_notice').html(response.status);
-                if (response.response === "valid") {
+                jQuery('#' + id + '-status').val(response.license);
+                jQuery('#' + id + '-status_notice').html(response.message);
+                if (response.license === "valid") {
                     //jQuery('#'+id+'-notice').switchClass( "big", "blue", 1000, "easeInOutQuad" );
                     jQuery('#' + id + '-notice').attr('class', "redux-info-field redux-success");
                     jQuery('#' + id + '-activate').fadeOut('medium', function() {
                         jQuery('#' + id + '-deactivate').fadeIn().css("display", "inline-block");
                     });
-                } else if (response.response === "deactivated") {
+                } else if (response.license === "failed") {
+                    jQuery('#' + id + '-notice').attr('class', "redux-info-field redux-critical");
+                } else if (response.license === "deactivated") {
                     jQuery('#' + id + '-notice').attr('class', "redux-info-field redux-warning");
                     jQuery('#' + id + '-deactivate').fadeOut('medium', function() {
                         jQuery('#' + id + '-activate').fadeIn().css("display", "inline-block");

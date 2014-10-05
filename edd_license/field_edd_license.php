@@ -32,7 +32,7 @@ if( !class_exists( 'ReduxFramework_edd_license' ) ) {
      * @since       1.0.0
      */
 	class ReduxFramework_edd_license extends ReduxFramework {
-	
+
 		/**
 		 * Field Constructor.
 		 *
@@ -43,7 +43,7 @@ if( !class_exists( 'ReduxFramework_edd_license' ) ) {
 	 	 * @return		void
 		 */
 		public function __construct( $field = array(), $value ='', $parent ) {
-		
+
 			parent::__construct( $parent->sections, $parent->args );
 
 			$this->field = $field;
@@ -60,33 +60,32 @@ if( !class_exists( 'ReduxFramework_edd_license' ) ) {
 				'mode' => '',
 			);
 
-			$this->field = wp_parse_args( $this->field, $defaults );    
+			$this->field = wp_parse_args( $this->field, $defaults );
 
 			$defaults = array(
 				'license' 	=> '',
 				'status' 	=> '',
+				'response'	=> '',
 			);
 
-			$this->value = wp_parse_args( $this->value, $defaults );			
+			$this->value = wp_parse_args( $this->value, $defaults );
 
-			$this->parent = $parent;		
-		
+			$this->parent = $parent;
+
 		}
-	
-		/**
-		 * Field Render Function.
-		 *
-		 * Takes the vars and outputs the HTML for the field in the settings
-	 	 *
-	 	 * @since 		1.0.0
-	 	 * @access		public
-	 	 * @return		void
-		 */
-		public function render() {
+
+		function get_license_data() {
+
+			$license_data = NULL;
 
 			if ( !empty( $this->value['license'] ) ) {
-				$transient = get_transient('redux_edd_license_'.$this->field['id'] . '_valid');
-				if ( empty( $transient ) ) {
+
+				$license_data = get_transient('redux_edd_license_'.$this->field['id'] . '_valid');
+
+				if ( empty( $license_data ) || is_wp_error( $license_data ) || !is_object( $license_data ) ) {
+
+					$EDD_Extension = ReduxFramework_extension_edd::$theInstance;
+
 			        $data = array(
 			          'edd_action'  => 'check_license',
 			          'license'     => $this->value['license'],
@@ -98,58 +97,96 @@ if( !class_exists( 'ReduxFramework_edd_license' ) ) {
 			          'remote_api_url' => $this->field['remote_api_url']
 			        );
 
-			        $edd = ReduxFramework_extension_edd::$theInstance;
-			        $license_data = json_decode( $edd->license_call($data), true );
-			        $this->value['status'] = $license_data['status'];
-				} else {
-					if (empty($this->value['status'])) {
-						$this->value['status'] = $transient;	
-					}
+			        $license_data = json_decode( $EDD_Extension->license_call( $data ) );
+
 				}
-			} else {
-				$this->value['status'] = __('Not Activated', 'redux-framework');
-			}
-			$this->value['status'] = ucfirst( $this->value['status'] );
 
-			if ( $this->value['status'] == __('Deactivated', 'redux-framework') ) {
-				$noticeClasses = 'redux-warning redux-info-field';
-			} else if ( $this->value['status'] == __('Valid', 'redux-framework') ) {
-				$noticeClasses = 'redux-success redux-info-field';
-			} else if ( $this->value['status'] == __('Not Activated', 'redux-framework') ) {
-				$noticeClasses = 'redux-warning redux-info-field';
-			} else {
-				$noticeClasses = 'redux-critical redux-info-field';
 			}
 
-			echo '<div id="' . $this->field['id'] . '-notice" data-verify="'.__('Verifying license...', 'redux-framework').'" class="'.$noticeClasses.'">';
-			echo '<b>' . __('Status', 'redux-framework') . ': <span id="' . $this->field['id'] . '-status_notice">'.ucfirst($this->value['status']).'</span></b></div>';
+			return $license_data;
 
-			echo '<input type="hidden" class="redux-edd " type="text" id="' . $this->field['id'] . '-field_id" value="' . $this->field['id'] . '" " />'; 
-			echo '<input type="hidden" class="redux-edd " type="text" id="' . $this->field['id'] . '-remote_api_url" value="' . $this->field['remote_api_url'] . '" " />'; 
-			echo '<input type="hidden" class="redux-edd " type="text" id="' . $this->field['id'] . '-version" value="' . $this->field['version'] . '" " />'; 
-			echo '<input type="hidden" class="redux-edd " type="text" id="' . $this->field['id'] . '-item_name" value="' . $this->field['item_name'] . '" " />'; 
-			echo '<input type="hidden" class="redux-edd " type="text" id="' . $this->field['id'] . '-author" value="' . $this->field['author'] . '" " />'; 
-			echo '<input name="' . $this->args['opt_name'] . '[' . $this->field['id'] . '][license]"  id="' . $this->field['id'] . '-license" class="noUpdate redux-edd-input redux-edd ' . $this->field['class'] . '"  type="text" value="' . $this->value['license'] . '" " />'; 
-			echo '<input type="hidden" name="' . $this->args['opt_name'] . '[' . $this->field['id'] . '][status]" id="' . $this->field['id'] . '-status" class="redux-edd redux-edd-status ' . $this->field['class'] . '" type="text" value="' . $this->value['status'] . '" " />'; 
-			echo '<a href="#" data-id="'.$this->field['id'].'" class="button button-primary redux-EDDAction hide" data-edd_action="check_license">'.__('Verify License', 'redux-framework').'</a>';
+		}
+
+		/**
+		 * Field Render Function.
+		 *
+		 * Takes the vars and outputs the HTML for the field in the settings
+	 	 *
+	 	 * @since 		1.0.0
+	 	 * @access		public
+	 	 * @return		void
+		 */
+		public function render() {
+
+			$EDD_Extension = ReduxFramework_extension_edd::$theInstance;
+
+			$license_data = $this->get_license_data();
+
+			if( !empty( $license_data ) ) {
+
+				$this->value['status'] = isset( $license_data->error ) ? $license_data->error : $license_data->license;
+
+			} else {
+				$this->value['status'] = 'site_inactive';
+			}
+
+			switch( $this->value['status'] ) {
+				case 'deactivated':
+				case 'site_inactive':
+					$noticeClasses = 'redux-warning redux-info-field';
+					break;
+				case 'valid':
+					$noticeClasses = 'redux-success redux-info-field';
+					break;
+				default:
+					if( empty( $license_data->success ) ) {
+						$noticeClasses = 'redux-critical redux-info-field';
+					} else {
+						$noticeClasses = 'redux-success redux-info-field';
+					}
+
+					break;
+			}
+
+			echo '<div id="' . $this->field['id'] . '-notice" data-verify="'.esc_attr( $EDD_Extension->strings('verifying_license') ).'" class="'.$noticeClasses.'">';
+			echo '<strong>' . esc_html( $EDD_Extension->strings('status') ) . ': <span id="' . $this->field['id'] . '-status_notice">'. $EDD_Extension->strings( $this->value['status'] ) .'</span></strong></div>';
+
+			$fields = array(
+				'field_id' => 'id',
+				'remote_api_url' => 'remote_api_url',
+				'version' => 'version',
+				'item_name' => 'item_name',
+				'author' => 'author',
+				'status' => 'status',
+			);
+
+			foreach ($fields as $key => $value ) {
+				$value = isset( $this->field[ $value ] ) ? $this->field[ $value ] : NULL;
+				echo '<input type="hidden" class="redux-edd redux-edd-'.esc_attr( $key ).'" id="' . $this->field['id'] . '-'.esc_attr( $key ).'" value="' . esc_attr( $value ) . '" />';
+
+			}
+
+			echo '<input name="' . $this->args['opt_name'] . '[' . $this->field['id'] . '][license]"  id="' . $this->field['id'] . '-license" class="noUpdate redux-edd-input redux-edd ' . $this->field['class'] . '"  type="text" value="' . $this->value['license'] . '" " />';
+			echo '<a href="#" data-id="'.$this->field['id'].'" class="button button-primary redux-EDDAction hide" data-edd_action="check_license">'.esc_attr( $EDD_Extension->strings( 'check_license' ) ).'</a>';
 			$hide = "";
-			if ($this->value['status'] == "Valid") {
+
+			if( $this->value['status'] === 'valid' ) {
 				$hide = " hide";
 			}
-			echo '&nbsp; <a href="#" id="'.$this->field['id'].'-activate" data-id="'.$this->field['id'].'" class="button button-primary redux-EDDAction'.$hide.'" data-edd_action="activate_license">'.__('Activate License', 'redux-framework').'</a>';
+			echo '&nbsp; <a href="#" id="'.$this->field['id'].'-activate" data-id="'.$this->field['id'].'" class="button button-primary redux-EDDAction'.$hide.'" data-edd_action="activate_license">'.esc_attr( $EDD_Extension->strings( 'activate_license' ) ).'</a>';
 			$hide = "";
-			if ($this->value['status'] != "Valid") {
+			if ( $this->value['status'] !== 'valid' ) {
 				$hide = " hide";
-			}			
-			echo '&nbsp; <a href="#" id="'.$this->field['id'].'-deactivate" data-id="'.$this->field['id'].'" class="button button-secondary redux-EDDAction'.$hide.'" data-edd_action="deactivate_license">'.__('Deactivate License', 'redux-framework').'</a>';
+			}
+			echo '&nbsp; <a href="#" id="'.$this->field['id'].'-deactivate" data-id="'.$this->field['id'].'" class="button button-secondary redux-EDDAction'.$hide.'" data-edd_action="deactivate_license">'.esc_attr( $EDD_Extension->strings( 'deactivate_license' ) ).'</a>';
 			if (isset($this->parent->args['edd'])) {
 				foreach( $this->parent->args['edd'] as $k => $v ) {
-					echo '<input type="hidden" data-id="'.$this->field['id'].'" id="' . $this->field['id'] . '-'.$k.'" class="redux-edd edd-'.$k.'"  type="text" value="' . $v . '" " />';
+					echo '<input type="hidden" data-id="'.$this->field['id'].'" id="' . $this->field['id'] . '-'.$k.'" class="redux-edd edd-'.$k.'"  type="text" value="' . $v . '" />';
 				}
 			}
-			
+
 		}
-	
+
 		/**
 		 * Enqueue Function.
 		 *
@@ -169,20 +206,20 @@ if( !class_exists( 'ReduxFramework_edd_license' ) ) {
             );
 
 			wp_enqueue_script(
-				'redux-field-edd-js', 
-				ReduxFramework::$_url . 'extensions/edd/edd_license/field_edd_license.js', 
+				'redux-field-edd-js',
+				ReduxFramework::$_url . 'extensions/edd/edd_license/field_edd_license.js',
 				array( 'jquery' ),
 				time(),
 				true
 			);
 
 			wp_enqueue_style(
-				'redux-field-edd-css', 
-				ReduxFramework::$_url . 'extensions/edd/edd_license/field_edd_license.css', 
+				'redux-field-edd-css',
+				ReduxFramework::$_url . 'extensions/edd/edd_license/field_edd_license.css',
 				time(),
 				true
 			);
-		
+
 		}
 	}
 }
