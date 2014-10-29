@@ -124,7 +124,7 @@ if( !class_exists( 'ReduxFramework_extension_edd' ) ) {
 						}
 					}
 
-					if ( !empty( $this->parent->options[ $field['id'] ]['license'] ) && $this->parent->options[ $field['id'] ]['status'] === 'valid' ) {
+					if ( !empty( $this->parent->options[ $field['id'] ]['license'] ) && isset( $this->parent->options[ $field['id'] ]['status'] ) && $this->parent->options[ $field['id'] ]['status'] === 'valid' ) {
 						$edd_updater = new EDD_SL_Plugin_Updater( $field['remote_api_url'], $field['path'], array(
 								'version' => $field['version'], // current version number
 								'license'   =>  $this->parent->options[ $field['id'] ]['license'],    // license key (used get_option above to retrieve from DB)
