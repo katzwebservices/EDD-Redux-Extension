@@ -215,7 +215,7 @@ if ( !function_exists( 'edd_license_key_callback' ) ) {
 
 		if ( 'valid' == get_option( $args['options']['is_valid_license_option'] ) ) {
 			$html .= wp_nonce_field( $args['id'] . '_nonce', $args['id'] . '_nonce', false );
-			$html .= '<input type="submit" class="button-secondary" name="' . $args['id'] . '_deactivate" value="' . __( 'Deactivate License',  'edd-recurring' ) . '"/>';
+			$html .= '<input type="submit" class="button-secondary" name="' . $args['id'] . '_deactivate" value="' . __( 'Deactivate License',  'gravityview' ) . '"/>';
 		}
 		$html .= '<label for="edd_settings_' . $args['section'] . '[' . $args['id'] . ']"> '  . $args['desc'] . '</label>';
 
