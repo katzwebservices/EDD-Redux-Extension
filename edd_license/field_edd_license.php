@@ -200,23 +200,23 @@ if( !class_exists( 'ReduxFramework_edd_license' ) ) {
 
             wp_enqueue_style(
                 'redux-field-info-css',
-                ReduxFramework::$_url . 'inc/fields/info/field_info.css',
                 time(),
+	            ReduxFramework::$_url . 'inc/fields/info/field_info.css',
                 true
             );
 
 			wp_enqueue_script(
 				'redux-field-edd-js',
-				ReduxFramework::$_url . 'extensions/edd/edd_license/field_edd_license.js',
 				array( 'jquery' ),
 				time(),
 				true
+				ReduxFramework_extension_edd::getInstance()->extension_url . 'edd_license/field_edd_license.js',
 			);
 
 			wp_enqueue_style(
 				'redux-field-edd-css',
-				ReduxFramework::$_url . 'extensions/edd/edd_license/field_edd_license.css',
 				time(),
+				ReduxFramework_extension_edd::getInstance()->extension_url . 'edd_license/field_edd_license.css',
 				true
 			);
 

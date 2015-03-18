@@ -58,17 +58,11 @@ if( !class_exists( 'ReduxFramework_extension_edd' ) ) {
 
 				self::$theInstance = $this;
 
-				add_action('admin_enqueue_scripts', array(&$this, 'enqueue_scripts'));
 				add_filter( 'redux/'.$this->parent->args['opt_name'].'/field/class/edd_license', array( &$this, 'overload_edd_license_field_path' ) ); // Adds the local field
 				add_action( 'redux/options/'.$this->parent->args['opt_name'].'/field/edd_license/register', array( &$this, 'register' ) );
 				add_action( 'redux/options/'.$this->parent->args['opt_name'].'/validate', array( &$this, 'save_options') );
 				add_action( 'wp_ajax_redux_edd_'.$parent->args['opt_name'].'_license', array( &$this, 'license_call' ) );
 
-			}
-
-			public function enqueue_scripts() {
-				wp_enqueue_script( 'redux-edd_license', plugins_url( '/edd_license/field_edd_license.js', __FILE__ ) );
-				wp_enqueue_style( 'redux-edd_license', plugins_url( '/edd_license/field_edd_license.css', __FILE__ ) );
 			}
 
 			static public function getInstance() {
