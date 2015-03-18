@@ -206,15 +206,15 @@ if( !class_exists( 'ReduxFramework_edd_license' ) ) {
             );
 
 			wp_enqueue_script(
-				'redux-field-edd-js',
 				array( 'jquery' ),
 				true
+				'redux-field-edd_license-js',
 				ReduxFramework_extension_edd::getInstance()->extension_url . 'edd_license/field_edd_license.js',
 				ReduxFramework_extension_edd::edd_license_field_version,
 			);
 
 			wp_enqueue_style(
-				'redux-field-edd-css',
+				'redux-field-edd_license-css',
 				ReduxFramework_extension_edd::getInstance()->extension_url . 'edd_license/field_edd_license.css',
 				ReduxFramework_extension_edd::edd_license_field_version,
 				true
