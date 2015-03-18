@@ -1,11 +1,11 @@
 /*global jQuery, document, redux, ajaxurl */
-(function($) {
-    'use strict';
-    $.redux = $.redux || {};
-    $(document).ready(function() {
-        $.redux.edd();
-    });
-    $.redux.edd = function() {
+(function( $ ) {
+	"use strict";
+
+	redux.field_objects = redux.field_objects || {};
+	redux.field_objects.edd_license = redux.field_objects.edd_license || {};
+
+	redux.field_objects.edd_license.init = function() {
         jQuery('.redux-edd-input').change(function() {
             jQuery(this).parent().find('.redux-edd-status').val('');
         });
