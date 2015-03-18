@@ -33,6 +33,8 @@ if( !class_exists( 'ReduxFramework_extension_edd' ) ) {
 		 */
 		class ReduxFramework_extension_edd extends ReduxFramework {
 
+			const edd_license_field_version = '1.0.1';
+
 			// Protected vars
 			protected $parent;
 			public $extension_url;
