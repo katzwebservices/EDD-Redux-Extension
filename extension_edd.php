@@ -268,7 +268,7 @@ if( !class_exists( 'ReduxFramework_extension_edd' ) ) {
 				}
 			}
 
-			// Forces the use of the embeded field path vs what the core typically would use
+			// Forces the use of the embedded field path vs what the core typically would use
 			public function overload_edd_license_field_path($field) {
 				return dirname(__FILE__).'/edd_license/field_edd_license.php';
 			}

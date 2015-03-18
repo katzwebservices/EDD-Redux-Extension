@@ -57,7 +57,6 @@ if( !class_exists( 'ReduxFramework_edd_license' ) ) {
 				'version' => '',
 				'item_name' => '',
 				'author' => '',
-				'mode' => '',
 			);
 
 			$this->field = wp_parse_args( $this->field, $defaults );
@@ -198,7 +197,7 @@ if( !class_exists( 'ReduxFramework_edd_license' ) ) {
 		 */
 		public function enqueue() {
 
-            wp_enqueue_style(
+			wp_enqueue_style(
                 'redux-field-info-css',
 	            ReduxFramework::$_url . 'inc/fields/info/field_info.css',
 				ReduxFramework_extension_edd::edd_license_field_version,
@@ -206,11 +205,11 @@ if( !class_exists( 'ReduxFramework_edd_license' ) ) {
             );
 
 			wp_enqueue_script(
-				array( 'jquery' ),
-				true
 				'redux-field-edd_license-js',
 				ReduxFramework_extension_edd::getInstance()->extension_url . 'edd_license/field_edd_license.js',
+				array( 'jquery', 'redux-js' ),
 				ReduxFramework_extension_edd::edd_license_field_version,
+				false
 			);
 
 			wp_enqueue_style(
