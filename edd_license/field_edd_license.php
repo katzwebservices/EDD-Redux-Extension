@@ -166,7 +166,7 @@ if( !class_exists( 'ReduxFramework_edd_license' ) ) {
 
 			}
 
-			echo '<input name="' . $this->args['opt_name'] . '[' . $this->field['id'] . '][license]"  id="' . $this->field['id'] . '-license" class="noUpdate redux-edd-input redux-edd ' . $this->field['class'] . '"  type="text" value="' . $this->value['license'] . '" " />';
+			echo '<input name="' . $this->args['opt_name'] . '[' . $this->field['id'] . '][license]"  id="' . $this->field['id'] . '-license" class="noUpdate redux-edd-input redux-edd ' . $this->field['class'] . ' regular-text code"  type="text" value="' . $this->value['license'] . '" " />';
 			echo '<a href="#" data-id="'.$this->field['id'].'" class="button button-primary redux-EDDAction hide" data-edd_action="check_license">'.esc_attr( $EDD_Extension->strings( 'check_license' ) ).'</a>';
 			$hide = "";
 
